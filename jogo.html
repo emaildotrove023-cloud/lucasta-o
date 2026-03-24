@@ -8,6 +8,230 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
+        /* FUNDO ANIMADO FUNCIONAL */
+        body {
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #050505, #0d210d, #121212, #081f08);
+            background-size: 400% 400%;
+            animation: moveGradient 15s ease infinite;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .nav-top { width: 100%; max-width: 600px; margin: 15px 0; }
+        
+        .btn-back {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-back:hover { background: rgba(40, 167, 69, 0.2); color: #28a745; border-color: #28a745; }
+
+        h1 { font-size: 1.4rem; color: #28a745; letter-spacing: 4px; margin: 10px 0; text-transform: uppercase; }
+
+        .score-board { display: flex; gap: 25px; margin-bottom: 20px; font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+        .highlight { color: #fff; font-weight: 700; }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 620px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            height: 95px;
+            position: relative;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .card.match { opacity: 0.4; cursor: default; transform: scale(0.95); }
+
+        /* LÓGICA DE FRENTE/VERSO */
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            border-radius: 12px;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .card-front {
+            background: #111;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .card-front img { width: 100%; height: 100%; object-fit: cover; }
+
+        .card-back {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #28a745;
+            z-index: 1;
+        }
+
+        /* ESTADO VIRADO */
+        .card.flip .card-front { opacity: 1; visibility: visible; }
+        .card.flip .card-back { opacity: 0; visibility: hidden; }
+
+        .btn-restart {
+            background: #28a745;
+            color: #fff;
+            padding: 14px 40px;
+            border: none;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.4s;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-restart:hover { transform: translateY(-3px); background: #34ce57; }
+
+        @media (max-width: 500px) {
+            .game-container { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .card { height: 85px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-top">
+        <a href="lucas.html" class="btn-back">← Voltar ao Portal</a>
+    </nav>
+
+    <h1>LUCASTAÇO MEMORY</h1>
+    
+    <div class="score-board">
+        <div>Tentativas: <span id="moves" class="highlight">0</span></div>
+        <div>Pares: <span id="matches" class="highlight">0</span> / 12</div>
+    </div>
+
+    <div class="game-container" id="game-board"></div>
+
+    <button class="btn-restart" onclick="initGame()">Reiniciar Jogo 🔄</button>
+
+    <script>
+        const allImages = [
+            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg",
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg",
+            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg", "https://i.imgur.com/fDIdYdK.jpg"
+        ];
+
+        let moves = 0, matchesCount = 0, firstCard, secondCard, lockBoard = false;
+        const totalPairs = 12;
+
+        function initGame() {
+            moves = 0; matchesCount = 0;
+            document.getElementById('moves').innerText = moves;
+            document.getElementById('matches').innerText = matchesCount;
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            
+            const gameImages = [...allImages.slice(0, totalPairs), ...allImages.slice(0, totalPairs)];
+            gameImages.sort(() => Math.random() - 0.5);
+
+            gameImages.forEach(imgUrl => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = imgUrl;
+                card.innerHTML = `
+                    <div class="card-front"><img src="${imgUrl}"></div>
+                    <div class="card-back">⚽</div>
+                `;
+                card.addEventListener('click', flipCard);
+                board.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard || this === firstCard) return;
+            this.classList.add('flip');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            moves++;
+            document.getElementById('moves').innerText = moves;
+            checkMatch();
+        }
+
+        function checkMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+            if (isMatch) {
+                matchesCount++;
+                document.getElementById('matches').innerText = matchesCount;
+                firstCard.classList.add('match');
+                secondCard.classList.add('match');
+                resetBoard();
+                if(matchesCount === totalPairs) setTimeout(() => alert("🏆 VITÓRIA!"), 500);
+            } else {
+                lockBoard = true;
+                setTimeout(() => {
+                    firstCard.classList.remove('flip');
+                    secondCard.classList.remove('flip');
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function resetBoard() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
+
+        window.onload = initGame;
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Lucastaço Memory Game ⚽</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+
         /* --- FUNDO ANIMADO PREMIUM --- */
         body {
             margin: 0;
