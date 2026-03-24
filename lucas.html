@@ -13,6 +13,7 @@
             padding: 0;
             min-height: 100vh;
             display: flex;
+            flex-direction: column; /* Ajustado para acomodar a nav */
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
@@ -27,6 +28,38 @@
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        /* BARRA DE NAVEGAÇÃO */
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .nav-link.active {
+            color: #28a745;
+        }
+
+        .nav-link:hover {
+            color: #fff;
         }
 
         .music-control {
@@ -56,6 +89,7 @@
             max-width: 420px;
             text-align: center;
             z-index: 10;
+            margin-top: 60px; /* Espaço para a nav */
         }
 
         h1 {
@@ -140,6 +174,11 @@
 </head>
 <body>
 
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-link active">Explorer</a>
+        <a href="jogo.html" class="nav-link">Memory Game 🧩</a>
+    </nav>
+
     <div class="music-control" onclick="toggleMusic()">
         <span id="music-icon">🔇</span>
     </div>
@@ -168,19 +207,15 @@
         const musicIcon = document.getElementById('music-icon');
         let musicStarted = false;
 
-        // Monitor de erro de áudio
         music.addEventListener('error', function() {
             musicIcon.innerText = "⚠️";
-            console.error("Erro ao carregar a música.");
         });
 
         function toggleMusic() {
             if (music.paused) {
                 music.play().then(() => {
                     musicIcon.innerText = "🔊";
-                }).catch(e => {
-                    console.log("Play negado");
-                });
+                }).catch(e => console.log("Play negado"));
             } else {
                 music.pause();
                 musicIcon.innerText = "🔇";
@@ -264,14 +299,11 @@
                 availablePhotos = [...lucasPhotos];
                 viewedCount = 0;
             }
-
             const randomIndex = Math.floor(Math.random() * availablePhotos.length);
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             const selectedImg = availablePhotos[randomIndex];
-
             availablePhotos.splice(randomIndex, 1);
             viewedCount++;
-
             updateUI(selectedImg, randomQuote);
         }
 
@@ -279,17 +311,14 @@
             const img = document.getElementById('display-img');
             const txt = document.getElementById('motivation-text');
             const cnt = document.getElementById('img-counter');
-
             img.style.opacity = 0;
             img.style.transform = "scale(1.1)";
             txt.style.opacity = 0;
             txt.style.transform = "translateY(20px)";
-
             setTimeout(() => {
                 img.src = imgUrl;
                 txt.innerText = `"${quoteText}"`;
                 cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
-                
                 img.onload = () => {
                     img.style.opacity = 1;
                     img.style.transform = "scale(1)";
@@ -298,7 +327,6 @@
                 };
             }, 400);
         }
-
         nextStep();
     </script>
 </body>
