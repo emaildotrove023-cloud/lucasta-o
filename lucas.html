@@ -7,7 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
-        /* Fundo Animado Moderno */
+        /* Fundo Animado Corrigido */
         body {
             margin: 0;
             padding: 0;
@@ -16,8 +16,7 @@
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
-            /* Gradiente animado */
-            background: linear-gradient(-45deg, #050505, #0d1a0d, #0a0a0a, #1a1a1a);
+            background: linear-gradient(-45deg, #050505, #0d1a0d, #050505, #121212);
             background-size: 400% 400%;
             animation: moveGradient 15s ease infinite;
             color: #ffffff;
@@ -30,7 +29,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Container Principal */
         .main-container {
             width: 90%;
             max-width: 420px;
@@ -44,10 +42,10 @@
             color: #28a745;
             margin-bottom: 25px;
             font-weight: 700;
-            text-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+            text-transform: uppercase;
         }
 
-        /* Card da Foto com Vidro */
+        /* Card com Vidro */
         .photo-card {
             position: relative;
             width: 100%;
@@ -58,17 +56,17 @@
             margin-bottom: 35px;
             overflow: hidden;
             box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         #display-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease;
+            opacity: 0;
+            transition: transform 1s ease, opacity 0.6s ease;
         }
 
-        /* Overlay do Texto Motivacional */
         .quote-overlay {
             position: absolute;
             bottom: 0;
@@ -76,23 +74,20 @@
             right: 0;
             padding: 50px 30px;
             background: linear-gradient(transparent, rgba(0,0,0,0.95));
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            pointer-events: none;
         }
 
         #motivation-text {
             font-size: 1.05rem;
-            font-weight: 400;
+            font-weight: 300;
             line-height: 1.5;
             font-style: italic;
-            color: rgba(255, 255, 255, 0.9);
+            color: #fff;
             opacity: 0;
             transform: translateY(20px);
             transition: all 0.7s ease;
         }
 
-        /* Botão Minimalista Moderno */
         .btn-action {
             background: #28a745;
             color: #fff;
@@ -103,25 +98,21 @@
             cursor: pointer;
             font-size: 13px;
             letter-spacing: 1.5px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
             text-transform: uppercase;
         }
 
         .btn-action:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 45px rgba(40, 167, 69, 0.5);
+            transform: translateY(-3px);
             background: #34ce57;
         }
-
-        .btn-action:active { transform: translateY(0); }
 
         .counter {
             margin-top: 25px;
             font-size: 0.65rem;
-            text-transform: uppercase;
             letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
@@ -131,18 +122,96 @@
         <h1>LUCASTAÇO EXPLORER</h1>
         
         <div class="photo-card">
-            <img id="display-img" src="" alt="Foco no objetivo">
+            <img id="display-img" src="" alt="Foto Lucastaço">
             <div class="quote-overlay">
-                <div id="motivation-text">Carregando inspiração...</div>
+                <div id="motivation-text"></div>
             </div>
         </div>
 
         <button class="btn-action" onclick="nextStep()">SORTEAR DESTINO 🎲</button>
 
-        <div class="counter" id="img-counter">Progresso: 0/0</div>
+        <div class="counter" id="img-counter">Carregando catálogo...</div>
     </div>
 
     <script>
+        // Lista corrigida com links diretos (extensão .jpg obrigatória para o Imgur)
         const lucasPhotos = [
             "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg",
-            "https://i
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg",
+            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
+            "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
+            "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
+            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg",
+            "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg",
+            "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
+            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg",
+            "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg",
+            "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
+            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
+        ];
+
+        const quotes = [
+            "Onde alguns veem limites, nós vemos oportunidades.",
+            "A consistência supera o talento em dias de tempestade.",
+            "Cada clique é um registro da sua evolução.",
+            "Não é sobre a chegada, é sobre quem você se torna no caminho.",
+            "Sua mente é seu maior ativo. Invista nela.",
+            "O sucesso é o resultado de decisões difíceis tomadas com calma.",
+            "Mantenha o foco. O ruído do mundo é passageiro.",
+            "A disciplina te leva onde a motivação não consegue alcançar.",
+            "Transforme cada desafio em um degrau para o topo.",
+            "Hoje é o dia perfeito para ser melhor do que ontem."
+        ];
+
+        let availablePhotos = [...lucasPhotos];
+        let viewedCount = 0;
+
+        function nextStep() {
+            if (availablePhotos.length === 0) {
+                availablePhotos = [...lucasPhotos];
+                viewedCount = 0;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availablePhotos.length);
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const selectedImg = availablePhotos[randomIndex];
+
+            availablePhotos.splice(randomIndex, 1);
+            viewedCount++;
+
+            updateUI(selectedImg, randomQuote);
+        }
+
+        function updateUI(imgUrl, quoteText) {
+            const img = document.getElementById('display-img');
+            const txt = document.getElementById('motivation-text');
+            const cnt = document.getElementById('img-counter');
+
+            // Reset visual antes de trocar
+            img.style.opacity = 0;
+            img.style.transform = "scale(1.1)";
+            txt.style.opacity = 0;
+            txt.style.transform = "translateY(20px)";
+
+            // Espera o fade out para trocar a fonte
+            setTimeout(() => {
+                img.src = imgUrl;
+                txt.innerText = `"${quoteText}"`;
+                cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
+                
+                // Quando a imagem carregar, faz o fade in
+                img.onload = () => {
+                    img.style.opacity = 1;
+                    img.style.transform = "scale(1)";
+                    txt.style.opacity = 1;
+                    txt.style.transform = "translateY(0)";
+                };
+            }, 400);
+        }
+
+        // Inicialização
+        nextStep();
+    </script>
+</body>
+</html>
