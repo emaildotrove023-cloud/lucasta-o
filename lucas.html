@@ -13,7 +13,7 @@
             padding: 0;
             min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Ajustado para acomodar a nav */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
@@ -30,14 +30,13 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* BARRA DE NAVEGAÇÃO */
+        /* BARRA DE NAVEGAÇÃO - APENAS JOGO */
         .nav-bar {
             position: fixed;
             top: 20px;
             display: flex;
-            gap: 15px;
             background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
+            padding: 10px 25px;
             border-radius: 50px;
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -46,20 +45,17 @@
 
         .nav-link {
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: 0.3s;
         }
 
-        .nav-link.active {
-            color: #28a745;
-        }
-
         .nav-link:hover {
-            color: #fff;
+            color: #28a745;
+            text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
         }
 
         .music-control {
@@ -89,7 +85,7 @@
             max-width: 420px;
             text-align: center;
             z-index: 10;
-            margin-top: 60px; /* Espaço para a nav */
+            margin-top: 60px;
         }
 
         h1 {
@@ -175,8 +171,7 @@
 <body>
 
     <nav class="nav-bar">
-        <a href="index.html" class="nav-link active">Explorer</a>
-        <a href="jogo.html" class="nav-link">Memory Game 🧩</a>
+        <a href="jogo.html" class="nav-link">Jogar Memory Game 🧩</a>
     </nav>
 
     <div class="music-control" onclick="toggleMusic()">
@@ -323,11 +318,4 @@
                     img.style.opacity = 1;
                     img.style.transform = "scale(1)";
                     txt.style.opacity = 1;
-                    txt.style.transform = "translateY(0)";
-                };
-            }, 400);
-        }
-        nextStep();
-    </script>
-</body>
-</html>
+                    txt.
