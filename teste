@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Lucastaço ⚽</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+
+        /* FUNDO ANIMADO */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #050505, #0d1a0d, #121212, #071a07);
+            background-size: 400% 400%;
+            animation: moveGradient 12s ease infinite;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- NOVO: BARRA DE NAVEGAÇÃO --- */
+        .nav-menu {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .nav-explorer { background: #28a745; color: #fff; } /* Aba Ativa */
+        .nav-game { color: rgba(255,255,255,0.6); }
+        .nav-game:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        /* Ícone de Som (Ajustado para não bater na nav) */
+        .music-control {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* RESTANTE DO LAYOUT */
+        .main-container { width: 90%; max-width: 420px; text-align: center; z-index: 10; margin-top: 40px; }
+        h1 { font-size: 0.8rem; letter-spacing: 6px; color: #28a745; margin-bottom: 25px; font-weight: 700; text-transform: uppercase; }
+        .photo-card { position: relative; width: 100%; height: 520px; background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border-radius: 35px; margin-bottom: 35px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.8); border: 1px solid rgba(255, 255, 255, 0.08); }
+        #display-img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: transform 1.2s ease, opacity 0.8s ease; }
+        .quote-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 60px 30px; background: linear-gradient(transparent, rgba(0,0,0,0.98)); pointer-events: none; }
+        #motivation-text { font-size: 1.05rem; font-weight: 300; line-height: 1.5; font-style: italic; color: #fff; opacity: 0; transform: translateY(20px); transition: all 0.8s ease; }
+        .btn-action { background: #28a745; color: #fff; padding: 18px 50px; border: none; border-radius: 100px; font-weight: 700; cursor: pointer; font-size: 13px; letter-spacing: 1.5px; transition: 0.4s; box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3); text-transform: uppercase; }
+        .btn-action:hover { transform: translateY(-4px); background: #34ce57; }
+        .counter { margin-top: 25px; font-size: 0.65rem; letter-spacing: 2px; color: rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-menu">
+        <a href="#" class="nav-item nav-explorer">Explorer</a>
+        <a href="jogo.html" class="nav-item nav-game">Memory Game 🧩</a>
+    </nav>
+
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🔇</span>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="main-container">
+        <h1>LUCASTAÇO EXPLORER</h1>
+        <div class="photo-card">
+            <img id="display-img" src="" alt="Foto Lucastaço">
+            <div class="quote-overlay">
+                <div id="motivation-text"></div>
+            </div>
+        </div>
+        <button class="btn-action" onclick="handleInteraction()">SORTEAR DESTINO 🎲</button>
+        <div class="counter" id="img-counter">Carregando catálogo...</div>
+    </div>
+
+    <script>
+        // Mesma lógica de fotos e frases anterior aqui...
+        const music = document.getElementById('bg-music');
+        const musicIcon = document.getElementById('music-icon');
+        let musicStarted = false;
+
+        function toggleMusic() {
+            if (music.paused) { music.play(); musicIcon.innerText = "🔊"; } 
+            else { music.pause(); musicIcon.innerText = "🔇"; }
+        }
+
+        function handleInteraction() {
+            if (!musicStarted) { music.play(); musicIcon.innerText = "🔊"; musicStarted = true; }
+            nextStep();
+        }
+
+        const lucasPhotos = ["https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg", "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg", "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg", "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg", "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg", "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg", "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg", "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg", "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg", "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg", "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg", "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg", "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"];
+        const quotes = ["Onde alguns veem limites, nós vemos oportunidades.", "A consistência supera o talento em dias de tempestade.", "Cada clique é um registro da sua evolução.", "Sua mente é seu maior ativo. Invista nela.", "O segredo do sucesso é a constância no objetivo.", "A persistência é o caminho para o êxito.", "Pequenos esforços repetidos levam a grandes resultados.", "O destino não é uma questão de sorte, é uma questão de escolha."];
+
+        let availablePhotos = [...lucasPhotos];
+        let viewedCount = 0;
+
+        function nextStep() {
+            if (availablePhotos.length === 0) { availablePhotos = [...lucasPhotos]; viewedCount = 0; }
+            const randomIndex = Math.floor(Math.random() * availablePhotos.length);
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            const selectedImg = availablePhotos[randomIndex];
+            availablePhotos.splice(randomIndex, 1);
+            viewedCount++;
+            updateUI(selectedImg, randomQuote);
+        }
+
+        function updateUI(imgUrl, quoteText) {
+            const img = document.getElementById('display-img');
+            const txt = document.getElementById('motivation-text');
+            const cnt = document.getElementById('img-counter');
+            img.style.opacity = 0; img.style.transform = "scale(1.1)";
+            txt.style.opacity = 0; txt.style.transform = "translateY(20px)";
+            setTimeout(() => {
+                img.src = imgUrl; txt.innerText = `"${quoteText}"`;
+                cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
+                img.onload = () => { img.style.opacity = 1; img.style.transform = "scale(1)"; txt.style.opacity = 1; txt.style.transform = "translateY(0)"; };
+            }, 400);
+        }
+        nextStep();
+    </script>
+</body>
+</html>
