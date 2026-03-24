@@ -5,182 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Lucastaço ⚽</title>
     <style>
-        /* Estilo Dark Moderno */
+        /* Fundo Animado e Estilo Moderno */
         body {
             margin: 0;
-            background-color: #0a0a0a;
-            color: #eee;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* Gradiente animado no fundo */
+            background: linear-gradient(-45deg, #0f0f0f, #1a1a1a, #0a2e14, #000000);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #ffffff;
         }
 
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container estilo Glassmorphism */
         .main-container {
             width: 90%;
-            max-width: 600px;
-            background: #151515;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid #28a745; /* Verde Sucesso */
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             text-align: center;
         }
 
         h1 {
-            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
             color: #28a745;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 1.5rem;
+            text-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
         }
 
         /* Moldura da Foto */
         .photo-frame {
             width: 100%;
-            height: 450px;
-            background: #000;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            margin-bottom: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 1px solid #333;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .photo-frame img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; /* Garante que a foto não corte */
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            object-fit: cover; /* Preenche melhor o espaço */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
         }
 
-        /* Botões de Navegação */
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 20px;
+        /* Botão Minimalista */
+        .btn-random {
+            background: #28a745;
+            color: white;
+            padding: 16px 40px;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 50px;
+            font-weight: 600;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s ease;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.2);
             text-transform: uppercase;
         }
 
-        .btn-nav { background: #333; color: white; }
-        .btn-random { background: #28a745; color: white; }
-
-        button:hover {
-            transform: translateY(-3px);
-            filter: brightness(1.2);
+        .btn-random:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(40, 167, 69, 0.4);
+            background: #34ce57;
         }
 
-        button:active { transform: translateY(0); }
+        .btn-random:active { transform: translateY(0); }
 
         .counter {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #666;
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
         }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <h1>LUCASTAÇO EXPLORER</h1>
+        <h1>LUCASTAÇO</h1>
         
         <div class="photo-frame">
-            <img id="display-img" src="" alt="Carregando Lucastaço...">
+            <img id="display-img" src="" alt="Carregando...">
         </div>
 
-        <div class="nav-buttons">
-            <button class="btn-nav" onclick="changeImage(-1)">⬅ Anterior</button>
-            <button class="btn-random" onclick="randomImage()">🔀 Aleatório</button>
-            <button class="btn-nav" onclick="changeImage(1)">Próximo ➡</button>
-        </div>
+        <button class="btn-random" onclick="nextRandom()">PRÓXIMA FOTO ALEATÓRIA 🎲</button>
 
-        <div class="counter" id="img-counter">Carregando fotos...</div>
+        <div class="counter" id="img-counter">Carregando catálogo...</div>
     </div>
 
     <script>
-        // Seus links corrigidos (links diretos i.imgur.com)
         const lucasPhotos = [
-            "https://i.imgur.com/qB3Ly5S.jpg",
-            "https://i.imgur.com/wzJmyi2.jpg",
-            "https://i.imgur.com/CxSIb1c.jpg",
-            "https://i.imgur.com/6zs7zPa.jpg",
-            "https://i.imgur.com/R3x4Hy5.jpg",
-            "https://i.imgur.com/wuzoEvd.jpg",
-            "https://i.imgur.com/7p7gGKj.jpg",
-            "https://i.imgur.com/EtIlkF4.jpg",
-            "https://i.imgur.com/fDIdYdK.jpg",
-            "https://i.imgur.com/nI7S3cm.jpg",
-            "https://i.imgur.com/ALZlQk6.jpg",
-            "https://imgur.com/nKLsZP0.jpg",
-            "https://imgur.com/RzfYcCD.jpg",
-            "https://imgur.com/bmRtMUH.jpg",
-            "https://imgur.com/OxrGM7M.jpg",
-            "https://imgur.com/Q8Mwplc.jpg",
-            "https://imgur.com/ix7g5HW.jpg",
-            "https://imgur.com/Qgh6mQa.jpg",
-            "https://imgur.com/Fc6DCfc.jpg",
-            "https://imgur.com/6bWNf3S.jpg",
-            "https://imgur.com/8qsxIpq.jpg",
-            "https://imgur.com/9uylBMQ.jpg",
-            "https://imgur.com/YtzG6dF.jpg",
-            "https://imgur.com/myYLeVE.jpg",
-            "https://imgur.com/MjwDn5R.jpg",
-            "https://imgur.com/shCboG4.jpg"
-        
+            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg",
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg",
+            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
+            "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
+            "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
+            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg",
+            "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg",
+            "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
+            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg",
+            "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg",
+            "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
+            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
         ];
 
-        let currentIndex = 0;
+        let availablePhotos = [...lucasPhotos]; // Cópia da lista original
+        let viewedCount = 0;
+
         const imgElement = document.getElementById('display-img');
         const counterElement = document.getElementById('img-counter');
 
-        // Função para atualizar a tela
-        function updateDisplay() {
-            // Efeito de fade simples
+        function nextRandom() {
+            // Se a lista de disponíveis acabar, reseta o ciclo
+            if (availablePhotos.length === 0) {
+                availablePhotos = [...lucasPhotos];
+                viewedCount = 0;
+                console.log("Ciclo reiniciado!");
+            }
+
+            // Seleciona um índice aleatório dentro dos disponíveis
+            const randomIndex = Math.floor(Math.random() * availablePhotos.length);
+            const selectedImg = availablePhotos[randomIndex];
+
+            // Remove a foto escolhida da lista de disponíveis para não repetir
+            availablePhotos.splice(randomIndex, 1);
+            viewedCount++;
+
+            // Atualiza a interface
+            updateDisplay(selectedImg);
+        }
+
+        function updateDisplay(url) {
             imgElement.style.opacity = 0;
+            imgElement.style.transform = "scale(0.95)";
             
             setTimeout(() => {
-                imgElement.src = lucasPhotos[currentIndex];
-                counterElement.innerText = `Imagem ${currentIndex + 1} de ${lucasPhotos.length}`;
+                imgElement.src = url;
+                counterElement.innerText = `Visualizadas: ${viewedCount} de ${lucasPhotos.length}`;
                 imgElement.style.opacity = 1;
-            }, 150);
+                imgElement.style.transform = "scale(1)";
+            }, 200);
         }
 
-        // Navegação Sequencial
-        function changeImage(step) {
-            currentIndex += step;
-            if (currentIndex >= lucasPhotos.length) currentIndex = 0;
-            if (currentIndex < 0) currentIndex = lucasPhotos.length - 1;
-            updateDisplay();
-        }
-
-        // Navegação Aleatória
-        function randomImage() {
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * lucasPhotos.length);
-            } while (newIndex === currentIndex); // Evita repetir a mesma foto no aleatório
-            
-            currentIndex = newIndex;
-            updateDisplay();
-        }
-
-        // Inicia com a primeira foto
-        updateDisplay();
+        // Inicia a primeira vez
+        nextRandom();
     </script>
 
 </body>
