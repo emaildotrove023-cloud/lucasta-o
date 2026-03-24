@@ -7,6 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
+        /* FUNDO ANIMADO */
         body {
             margin: 0;
             padding: 0;
@@ -15,9 +16,9 @@
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #050505, #0d1a0d, #050505, #121212);
+            background: linear-gradient(-45deg, #050505, #0d1a0d, #121212, #071a07);
             background-size: 400% 400%;
-            animation: moveGradient 15s ease infinite;
+            animation: moveGradient 12s ease infinite;
             color: #ffffff;
             overflow: hidden;
         }
@@ -28,22 +29,27 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Botão de Som */
         .music-control {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
             border-radius: 50%;
             cursor: pointer;
             z-index: 100;
             transition: 0.3s;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
         }
 
-        .music-control:hover { transform: scale(1.1); background: rgba(40, 167, 69, 0.3); }
+        .music-control:hover { transform: scale(1.1); background: rgba(40, 167, 69, 0.2); }
 
         .main-container {
             width: 90%;
@@ -59,19 +65,20 @@
             margin-bottom: 25px;
             font-weight: 700;
             text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
         }
 
         .photo-card {
             position: relative;
             width: 100%;
             height: 520px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
             border-radius: 35px;
             margin-bottom: 35px;
             overflow: hidden;
             box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         #display-img {
@@ -79,7 +86,7 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: transform 1s ease, opacity 0.6s ease;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.8s ease;
         }
 
         .quote-overlay {
@@ -87,8 +94,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 50px 30px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.95));
+            padding: 60px 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.98));
             pointer-events: none;
         }
 
@@ -100,7 +107,7 @@
             color: #fff;
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.7s ease;
+            transition: all 0.8s ease;
         }
 
         .btn-action {
@@ -113,13 +120,13 @@
             cursor: pointer;
             font-size: 13px;
             letter-spacing: 1.5px;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
             text-transform: uppercase;
         }
 
         .btn-action:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
             background: #34ce57;
         }
 
@@ -127,7 +134,7 @@
             margin-top: 25px;
             font-size: 0.65rem;
             letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -137,9 +144,8 @@
         <span id="music-icon">🔇</span>
     </div>
 
-    <audio id="bg-music" loop>
-        <source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg">
-        Seu navegador não suporta áudio.
+    <audio id="bg-music" loop crossorigin="anonymous">
+        <source src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" type="audio/mpeg">
     </audio>
 
     <div class="main-container">
@@ -162,10 +168,19 @@
         const musicIcon = document.getElementById('music-icon');
         let musicStarted = false;
 
+        // Monitor de erro de áudio
+        music.addEventListener('error', function() {
+            musicIcon.innerText = "⚠️";
+            console.error("Erro ao carregar a música.");
+        });
+
         function toggleMusic() {
             if (music.paused) {
-                music.play();
-                musicIcon.innerText = "🔊";
+                music.play().then(() => {
+                    musicIcon.innerText = "🔊";
+                }).catch(e => {
+                    console.log("Play negado");
+                });
             } else {
                 music.pause();
                 musicIcon.innerText = "🔇";
@@ -173,11 +188,11 @@
         }
 
         function handleInteraction() {
-            // Tenta iniciar a música na primeira interação do usuário
             if (!musicStarted) {
-                music.play();
-                musicIcon.innerText = "🔊";
-                musicStarted = true;
+                music.play().then(() => {
+                    musicIcon.innerText = "🔊";
+                    musicStarted = true;
+                }).catch(e => console.log("Aguardando interação"));
             }
             nextStep();
         }
@@ -210,10 +225,35 @@
             "Transforme cada desafio em um degrau para o topo.",
             "Hoje é o dia perfeito para ser melhor do que ontem.",
             "O segredo do sucesso é a constância no objetivo.",
-            "Sua única competição é quem você foi ontem.",
-            "Acredite: o impossível é apenas uma opinião.",
-            "Foco no processo, o resultado é consequência.",
-            "Grandes conquistas exigem grandes renúncias."
+            "Grandes jornadas começam com um pequeno passo.",
+            "Seja a sua melhor versão hoje.",
+            "A persistência é o caminho para o êxito.",
+            "Pequenos esforços repetidos levam a grandes resultados.",
+            "Sua única limitação é aquela que você impõe em sua mente.",
+            "Trabalhe em silêncio, deixe o seu sucesso fazer o barulho.",
+            "Não pare quando estiver cansado, pare quando tiver terminado.",
+            "Dificuldades preparam pessoas comuns para destinos extraordinários.",
+            "Acredite: algo maravilhoso está prestes a acontecer.",
+            "O que você faz hoje pode melhorar todos os seus amanhãs.",
+            "Não conte os dias, faça os dias contarem.",
+            "A coragem não é a ausência do medo, mas o triunfo sobre ele.",
+            "Se você quer algo que nunca teve, precisa fazer algo que nunca fez.",
+            "A vontade de vencer é importante, mas a vontade de se preparar é vital.",
+            "O sucesso é cair sete vezes e levantar oito.",
+            "Sempre parece impossível até que seja feito.",
+            "Não espere por oportunidades, crie-as.",
+            "O seu tempo é limitado, então não o gaste vivendo a vida de outra pessoa.",
+            "Você é mais forte do que imagina. Acredite nisso.",
+            "Mire na lua. Mesmo que você erre, ficará entre as estrelas.",
+            "Nada é tão recompensador quanto a superação pessoal.",
+            "Grandes mentes discutem ideias, mentes médias discutem eventos.",
+            "O otimismo é a fé em ação.",
+            "Mantenha seus olhos nas estrelas e seus pés no chão.",
+            "A jornada de mil milhas começa com um único passo.",
+            "Não importa o quão devagar você vá, desde que não pare.",
+            "Foco e paciência: as chaves para portas que parecem trancadas.",
+            "Seja resiliente. A pressão é o que transforma carvão em diamante.",
+            "O destino não é uma questão de sorte, é uma questão de escolha."
         ];
 
         let availablePhotos = [...lucasPhotos];
