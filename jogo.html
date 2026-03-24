@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucastaço Memory Game ⚽</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+
+        /* --- FUNDO ANIMADO PREMIUM --- */
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            font-family: 'Inter', sans-serif;
+            /* Gradiente animado */
+            background: linear-gradient(-45deg, #050505, #0d1a0d, #121212, #071a07);
+            background-size: 400% 400%;
+            animation: moveGradient 12s ease infinite;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- CABEÇALHO E PLACAR --- */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1rem;
+            letter-spacing: 5px;
+            color: #28a745;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .score-board {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .highlight { color: #fff; font-weight: 700; }
+
+        /* --- CONTAINER DO JOGO (GRADE) --- */
+        .game-container {
+            width: 100%;
+            max-width: 640px; /* Ajuste para caber 6 cartas de 100px + gaps */
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* Grade de 6 colunas */
+            gap: 10px;
+            perspective: 1000px; /* Necessário para o efeito 3D */
+            margin-bottom: 30px;
+        }
+
+        /* --- CARTAS E ANIMAÇÃO DE FLIP --- */
+        .card {
+            background-color: transparent;
+            height: 100px; /* Altura fixa da carta */
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Estado 'virado' da carta */
+        .card.flip {
+            transform: rotateY(180deg);
+            cursor: default;
+        }
+
+        /* Estado 'combinado' (par encontrado) */
+        .card.match {
+            transform: rotateY(180deg) scale(0.95);
+            opacity: 0.6;
+            cursor: default;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        /* Frente e Verso da Carta */
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: 12px;
+            backface-visibility: hidden; /* Esconde a face oposta */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Frente (onde fica a imagem) */
+        .card-front {
+            background-color: #1a1a1a;
+            transform: rotateY(180deg); /* Começa virada para trás */
+        }
+
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Faz a imagem preencher a carta */
+        }
+
+        /* Verso (capa da carta) */
+        .card-back {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(5px);
+            color: #28a745;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* --- BOTÃO REINICIAR --- */
+        .btn-restart {
+            background: transparent;
+            color: #28a745;
+            padding: 12px 30px;
+            border: 2px solid #28a745;
+            border-radius: 100px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .btn-restart:hover {
+            background: #28a745;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+        }
+
+        /* --- RESPONSIVIDADE PARA CELULAR --- */
+        @media (max-width: 500px) {
+            .game-container {
+                grid-template-columns: repeat(4, 1fr); /* 4 colunas no celular (grade 4x9) */
+                gap: 8px;
+            }
+            .card {
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>LUCASTAÇO MEMORY</h1>
+        <div class="score-board">
+            <div>Tentativas: <span id="moves" class="highlight">0</span></div>
+            <div>Pares: <span id="matches" class="highlight">0</span> / 18</div>
+        </div>
+    </header>
+
+    <main class="game-container" id="game-board"></main>
+
+    <button class="btn-restart" onclick="initGame()">Reiniciar Jogo 🔄</button>
+
+    <script>
+        // Lista completa das imagens (corrigidas)
+        const allImages = [
+            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg",
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg",
+            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
+            "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
+            "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
+            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg",
+            "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg",
+            "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
+            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg",
+            "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg",
+            "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
+            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
+        ];
+
+        const gameBoard = document.getElementById('game-board');
+        const movesEl = document.getElementById('moves');
+        const matchesEl = document.getElementById('matches');
+
+        let cards = []; // Array de elementos das cartas
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let moves = 0;
+        let matchesCount = 0;
+        const totalPairs = 18; // Definido para uma grade 6x6
+
+        // 1. Sorteia 18 imagens da lista e duplica para criar pares
+        function selectAndShuffleImages() {
+            // Embaralha a lista original
+            let shuffled = [...allImages].sort(() => 0.5 - Math.random());
+            // Pega as primeiras 18
+            let selected = shuffled.slice(0, totalPairs);
+            // Duplica (cria os pares)
+            let gameSet = [...selected, ...selected];
+            // Embaralha o conjunto final do jogo
+            return gameSet.sort(() => 0.5 - Math.random());
+        }
+
+        // 2. Gera o HTML das cartas na grade
+        function createBoard() {
+            gameBoard.innerHTML = ''; // Limpa o tabuleiro
+            const imageSet = selectAndShuffleImages();
+
+            imageSet.forEach(imgUrl => {
+                // Cria o elemento da carta
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = imgUrl; // ID para checar par
+
+                // Cria a frente (imagem)
+                const front = document.createElement('div');
+                front.classList.add('card-front');
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = 'Lucastaço';
+                front.appendChild(img);
+
+                // Cria o verso (capa)
+                const back = document.createElement('div');
+                back.classList.add('card-back');
+                back.innerText = '⚽';
+
+                // Monta a carta
+                card.appendChild(front);
+                card.appendChild(back);
+                
+                // Adiciona evento de clique
+                card.addEventListener('click', flipCard);
+                
+                // Adiciona ao tabuleiro
+                gameBoard.appendChild(card);
+            });
+        }
+
+        // 3. Lógica ao clicar na carta
+        function flipCard() {
+            // Bloqueia cliques extras ou clicar na mesma carta
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip'); // Aplica animação CSS
+
+            if (!hasFlippedCard) {
+                // Primeira carta virada
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            // Segunda carta virada
+            secondCard = this;
+            incrementMoves();
+            checkForMatch();
+        }
+
+        // 4. Checa se é um par
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+            isMatch ? disableCards() : unflipCards();
+        }
+
+        // 5. Acertou o par: desabilita as cartas
+        function disableCards() {
+            firstCard.classList.add('match'); // Animação de acerto
+            secondCard.classList.add('match');
+
+            // Remove os eventos de clique
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+
+            incrementMatches();
+            resetBoardVars();
+        }
+
+        // 6. Errou o par: vira as cartas de volta
+        function unflipCards() {
+            lockBoard = true; // Bloqueia o tabuleiro para animação terminar
+
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                resetBoardVars();
+            }, 1200); // Tempo que as cartas ficam expostas
+        }
+
+        // 7. Reseta variáveis da rodada
+        function resetBoardVars() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        // Atualiza tentativas
+        function incrementMoves() {
+            moves++;
+            movesEl.innerText = moves;
+        }
+
+        // Atualiza pontuação e checa fim de jogo
+        function incrementMatches() {
+            matchesCount++;
+            matchesEl.innerText = matchesCount;
+
+            if (matchesCount === totalPairs) {
+                setTimeout(() => {
+                    alert(`PARABÉNS! Você completou o Lucastaço Memory em ${moves} tentativas! 🏆`);
+                }, 600);
+            }
+        }
+
+        // Inicializa o jogo
+        function initGame() {
+            moves = 0;
+            matchesCount = 0;
+            movesEl.innerText = '0';
+            matchesEl.innerText = '0';
+            hasFlippedCard = false;
+            lockBoard = false;
+            firstCard = null;
+            secondCard = null;
+            createBoard();
+        }
+
+        // Inicia ao carregar a página
+        initGame();
+    </script>
+</body>
+</html>
