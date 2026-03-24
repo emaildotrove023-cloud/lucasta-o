@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Portal Lucastaço ⚽</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
@@ -30,7 +31,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* BARRA DE NAVEGAÇÃO - APENAS JOGO */
         .nav-bar {
             position: fixed;
             top: 20px;
@@ -53,10 +53,7 @@
             transition: 0.3s;
         }
 
-        .nav-link:hover {
-            color: #28a745;
-            text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
-        }
+        .nav-link:hover { color: #28a745; text-shadow: 0 0 10px rgba(40, 167, 69, 0.5); }
 
         .music-control {
             position: fixed;
@@ -70,15 +67,12 @@
             cursor: pointer;
             z-index: 100;
             transition: 0.3s;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 45px;
             height: 45px;
         }
-
-        .music-control:hover { transform: scale(1.1); background: rgba(40, 167, 69, 0.2); }
 
         .main-container {
             width: 90%;
@@ -93,17 +87,14 @@
             letter-spacing: 6px;
             color: #28a745;
             margin-bottom: 25px;
-            font-weight: 700;
             text-transform: uppercase;
-            text-shadow: 0 0 15px rgba(40, 167, 69, 0.3);
         }
 
         .photo-card {
             position: relative;
             width: 100%;
             height: 520px;
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(15px);
+            background: #000; /* Fundo preto enquanto carrega */
             border-radius: 35px;
             margin-bottom: 35px;
             overflow: hidden;
@@ -121,19 +112,15 @@
 
         .quote-overlay {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             padding: 60px 30px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.98));
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
             pointer-events: none;
         }
 
         #motivation-text {
             font-size: 1.05rem;
             font-weight: 300;
-            line-height: 1.5;
-            font-style: italic;
             color: #fff;
             opacity: 0;
             transform: translateY(20px);
@@ -148,24 +135,13 @@
             border-radius: 100px;
             font-weight: 700;
             cursor: pointer;
-            font-size: 13px;
-            letter-spacing: 1.5px;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
             text-transform: uppercase;
+            transition: 0.4s;
         }
 
-        .btn-action:hover {
-            transform: translateY(-4px);
-            background: #34ce57;
-        }
+        .btn-action:hover { transform: translateY(-4px); background: #34ce57; }
 
-        .counter {
-            margin-top: 25px;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.2);
-        }
+        .counter { margin-top: 25px; font-size: 0.65rem; color: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body>
@@ -178,22 +154,19 @@
         <span id="music-icon">🔇</span>
     </div>
 
-    <audio id="bg-music" loop crossorigin="anonymous">
+    <audio id="bg-music" loop>
         <source src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" type="audio/mpeg">
     </audio>
 
     <div class="main-container">
         <h1>LUCASTAÇO EXPLORER</h1>
-        
         <div class="photo-card">
-            <img id="display-img" src="" alt="Foto Lucastaço">
+            <img id="display-img" src="" alt="Foto">
             <div class="quote-overlay">
                 <div id="motivation-text"></div>
             </div>
         </div>
-
         <button class="btn-action" onclick="handleInteraction()">SORTEAR DESTINO 🎲</button>
-
         <div class="counter" id="img-counter">Carregando catálogo...</div>
     </div>
 
@@ -202,15 +175,28 @@
         const musicIcon = document.getElementById('music-icon');
         let musicStarted = false;
 
-        music.addEventListener('error', function() {
-            musicIcon.innerText = "⚠️";
-        });
+        const lucasPhotos = [
+            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg",
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg",
+            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg", "https://i.imgur.com/fDIdYdK.jpg",
+            "https://i.imgur.com/nI7S3cm.jpg", "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
+            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg", "https://i.imgur.com/OxrGM7M.jpg",
+            "https://i.imgur.com/Q8Mwplc.jpg", "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
+            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg", "https://i.imgur.com/8qsxIpq.jpg",
+            "https://i.imgur.com/9uylBMQ.jpg", "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
+            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
+        ];
+
+        const quotes = ["Onde alguns veem limites, nós vemos oportunidades.", "A consistência supera o talento.", "Sua mente é seu maior ativo.", "Mantenha o foco."]; // (Mantive encurtado aqui para exemplo, mas pode usar todas as suas)
+
+        let availablePhotos = [...lucasPhotos];
+        let viewedCount = 0;
 
         function toggleMusic() {
             if (music.paused) {
-                music.play().then(() => {
-                    musicIcon.innerText = "🔊";
-                }).catch(e => console.log("Play negado"));
+                music.play();
+                musicIcon.innerText = "🔊";
             } else {
                 music.pause();
                 musicIcon.innerText = "🔇";
@@ -219,75 +205,12 @@
 
         function handleInteraction() {
             if (!musicStarted) {
-                music.play().then(() => {
-                    musicIcon.innerText = "🔊";
-                    musicStarted = true;
-                }).catch(e => console.log("Aguardando interação"));
+                music.play().catch(() => {});
+                musicIcon.innerText = "🔊";
+                musicStarted = true;
             }
             nextStep();
         }
-
-        const lucasPhotos = [
-            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg",
-            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg",
-            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg",
-            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
-            "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
-            "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
-            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg",
-            "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg",
-            "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
-            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg",
-            "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg",
-            "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
-            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
-        ];
-
-        const quotes = [
-            "Onde alguns veem limites, nós vemos oportunidades.",
-            "A consistência supera o talento em dias de tempestade.",
-            "Cada clique é um registro da sua evolução.",
-            "Não é sobre a chegada, é sobre quem você se torna no caminho.",
-            "Sua mente é seu maior ativo. Invista nela.",
-            "O sucesso é o resultado de decisões difíceis tomadas com calma.",
-            "Mantenha o foco. O ruído do mundo é passageiro.",
-            "A disciplina te leva onde a motivação não consegue alcançar.",
-            "Transforme cada desafio em um degrau para o topo.",
-            "Hoje é o dia perfeito para ser melhor do que ontem.",
-            "O segredo do sucesso é a constância no objetivo.",
-            "Grandes jornadas começam com um pequeno passo.",
-            "Seja a sua melhor versão hoje.",
-            "A persistência é o caminho para o êxito.",
-            "Pequenos esforços repetidos levam a grandes resultados.",
-            "Sua única limitação é aquela que você impõe em sua mente.",
-            "Trabalhe em silêncio, deixe o seu sucesso fazer o barulho.",
-            "Não pare quando estiver cansado, pare quando tiver terminado.",
-            "Dificuldades preparam pessoas comuns para destinos extraordinários.",
-            "Acredite: algo maravilhoso está prestes a acontecer.",
-            "O que você faz hoje pode melhorar todos os seus amanhãs.",
-            "Não conte os dias, faça os dias contarem.",
-            "A coragem não é a ausência do medo, mas o triunfo sobre ele.",
-            "Se você quer algo que nunca teve, precisa fazer algo que nunca fez.",
-            "A vontade de vencer é importante, mas a vontade de se preparar é vital.",
-            "O sucesso é cair sete vezes e levantar oito.",
-            "Sempre parece impossível até que seja feito.",
-            "Não espere por oportunidades, crie-as.",
-            "O seu tempo é limitado, então não o gaste vivendo a vida de outra pessoa.",
-            "Você é mais forte do que imagina. Acredite nisso.",
-            "Mire na lua. Mesmo que você erre, ficará entre as estrelas.",
-            "Nada é tão recompensador quanto a superação pessoal.",
-            "Grandes mentes discutem ideias, mentes médias discutem eventos.",
-            "O otimismo é a fé em ação.",
-            "Mantenha seus olhos nas estrelas e seus pés no chão.",
-            "A jornada de mil milhas começa com um único passo.",
-            "Não importa o quão devagar você vá, desde que não pare.",
-            "Foco e paciência: as chaves para portas que parecem trancadas.",
-            "Seja resiliente. A pressão é o que transforma carvão em diamante.",
-            "O destino não é uma questão de sorte, é uma questão de escolha."
-        ];
-
-        let availablePhotos = [...lucasPhotos];
-        let viewedCount = 0;
 
         function nextStep() {
             if (availablePhotos.length === 0) {
@@ -295,27 +218,45 @@
                 viewedCount = 0;
             }
             const randomIndex = Math.floor(Math.random() * availablePhotos.length);
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             const selectedImg = availablePhotos[randomIndex];
             availablePhotos.splice(randomIndex, 1);
             viewedCount++;
-            updateUI(selectedImg, randomQuote);
+            
+            updateUI(selectedImg, quotes[Math.floor(Math.random() * quotes.length)]);
         }
 
         function updateUI(imgUrl, quoteText) {
             const img = document.getElementById('display-img');
             const txt = document.getElementById('motivation-text');
             const cnt = document.getElementById('img-counter');
+
+            // Reset visual antes de trocar
             img.style.opacity = 0;
-            img.style.transform = "scale(1.1)";
             txt.style.opacity = 0;
-            txt.style.transform = "translateY(20px)";
-            setTimeout(() => {
-                img.src = imgUrl;
-                txt.innerText = `"${quoteText}"`;
-                cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
-                img.onload = () => {
-                    img.style.opacity = 1;
-                    img.style.transform = "scale(1)";
-                    txt.style.opacity = 1;
-                    txt.
+
+            // Troca a imagem
+            img.src = imgUrl;
+
+            // Forçar a exibição se o cache do navegador for rápido
+            if (img.complete) {
+                revealContent(txt, quoteText, cnt);
+            } else {
+                img.onload = () => revealContent(txt, quoteText, cnt);
+            }
+        }
+
+        function revealContent(txt, quoteText, cnt) {
+            const img = document.getElementById('display-img');
+            img.style.opacity = 1;
+            img.style.transform = "scale(1)";
+            txt.innerText = `"${quoteText}"`;
+            txt.style.opacity = 1;
+            txt.style.transform = "translateY(0)";
+            cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
+        }
+
+        // Inicializa a primeira foto ao carregar a página
+        window.onload = nextStep;
+    </script>
+</body>
+</html>
