@@ -7,7 +7,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
-        /* Fundo Animado Corrigido */
         body {
             margin: 0;
             padding: 0;
@@ -29,6 +28,23 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Botão de Som */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            transition: 0.3s;
+        }
+
+        .music-control:hover { transform: scale(1.1); background: rgba(40, 167, 69, 0.3); }
+
         .main-container {
             width: 90%;
             max-width: 420px;
@@ -45,7 +61,6 @@
             text-transform: uppercase;
         }
 
-        /* Card com Vidro */
         .photo-card {
             position: relative;
             width: 100%;
@@ -118,6 +133,15 @@
 </head>
 <body>
 
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🔇</span>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+
     <div class="main-container">
         <h1>LUCASTAÇO EXPLORER</h1>
         
@@ -128,17 +152,40 @@
             </div>
         </div>
 
-        <button class="btn-action" onclick="nextStep()">SORTEAR DESTINO 🎲</button>
+        <button class="btn-action" onclick="handleInteraction()">SORTEAR DESTINO 🎲</button>
 
         <div class="counter" id="img-counter">Carregando catálogo...</div>
     </div>
 
     <script>
-        // Lista corrigida com links diretos (extensão .jpg obrigatória para o Imgur)
+        const music = document.getElementById('bg-music');
+        const musicIcon = document.getElementById('music-icon');
+        let musicStarted = false;
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                musicIcon.innerText = "🔊";
+            } else {
+                music.pause();
+                musicIcon.innerText = "🔇";
+            }
+        }
+
+        function handleInteraction() {
+            // Tenta iniciar a música na primeira interação do usuário
+            if (!musicStarted) {
+                music.play();
+                musicIcon.innerText = "🔊";
+                musicStarted = true;
+            }
+            nextStep();
+        }
+
         const lucasPhotos = [
-            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg",
-            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg",
-            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg",
+            "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg", "https://i.imgur.com/4yMMkqz.jpg",
+            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg", "https://i.imgur.com/vPk9ToX.jpg",
+            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg", "https://i.imgur.com/18qkEtz.jpg",
             "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
             "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
             "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
@@ -161,7 +208,12 @@
             "Mantenha o foco. O ruído do mundo é passageiro.",
             "A disciplina te leva onde a motivação não consegue alcançar.",
             "Transforme cada desafio em um degrau para o topo.",
-            "Hoje é o dia perfeito para ser melhor do que ontem."
+            "Hoje é o dia perfeito para ser melhor do que ontem.",
+            "O segredo do sucesso é a constância no objetivo.",
+            "Sua única competição é quem você foi ontem.",
+            "Acredite: o impossível é apenas uma opinião.",
+            "Foco no processo, o resultado é consequência.",
+            "Grandes conquistas exigem grandes renúncias."
         ];
 
         let availablePhotos = [...lucasPhotos];
@@ -188,19 +240,16 @@
             const txt = document.getElementById('motivation-text');
             const cnt = document.getElementById('img-counter');
 
-            // Reset visual antes de trocar
             img.style.opacity = 0;
             img.style.transform = "scale(1.1)";
             txt.style.opacity = 0;
             txt.style.transform = "translateY(20px)";
 
-            // Espera o fade out para trocar a fonte
             setTimeout(() => {
                 img.src = imgUrl;
                 txt.innerText = `"${quoteText}"`;
                 cnt.innerText = `EXPLORADO: ${viewedCount} / ${lucasPhotos.length}`;
                 
-                // Quando a imagem carregar, faz o fade in
                 img.onload = () => {
                     img.style.opacity = 1;
                     img.style.transform = "scale(1)";
@@ -210,7 +259,6 @@
             }, 400);
         }
 
-        // Inicialização
         nextStep();
     </script>
 </body>
