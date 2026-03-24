@@ -7,6 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
+        /* Fundo Animado Moderno */
         body {
             margin: 0;
             padding: 0;
@@ -15,45 +16,56 @@
             align-items: center;
             justify-content: center;
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #1a1a1a, #050505);
+            /* Gradiente animado */
+            background: linear-gradient(-45deg, #050505, #0d1a0d, #0a0a0a, #1a1a1a);
+            background-size: 400% 400%;
+            animation: moveGradient 15s ease infinite;
             color: #ffffff;
             overflow: hidden;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Container Principal */
         .main-container {
             width: 90%;
-            max-width: 450px;
+            max-width: 420px;
             text-align: center;
             z-index: 10;
         }
 
         h1 {
-            font-size: 0.9rem;
-            letter-spacing: 5px;
+            font-size: 0.8rem;
+            letter-spacing: 6px;
             color: #28a745;
-            margin-bottom: 20px;
-            opacity: 0.8;
+            margin-bottom: 25px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
         }
 
-        /* Moldura com Design de Card */
+        /* Card da Foto com Vidro */
         .photo-card {
             position: relative;
             width: 100%;
-            height: 500px;
-            background: #111;
-            border-radius: 30px;
-            margin-bottom: 30px;
+            height: 520px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 35px;
+            margin-bottom: 35px;
             overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         #display-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s ease, opacity 0.5s ease;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease;
         }
 
         /* Overlay do Texto Motivacional */
@@ -62,67 +74,70 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 40px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 50px 30px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.95));
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         #motivation-text {
-            font-size: 1.1rem;
-            font-weight: 300;
-            line-height: 1.4;
+            font-size: 1.05rem;
+            font-weight: 400;
+            line-height: 1.5;
             font-style: italic;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: rgba(255, 255, 255, 0.9);
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
+            transform: translateY(20px);
+            transition: all 0.7s ease;
         }
 
-        /* Botão Minimalista */
+        /* Botão Minimalista Moderno */
         .btn-action {
-            background: #ffffff;
-            color: #000;
-            padding: 18px 45px;
+            background: #28a745;
+            color: #fff;
+            padding: 18px 50px;
             border: none;
             border-radius: 100px;
             font-weight: 700;
             cursor: pointer;
             font-size: 13px;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            letter-spacing: 1.5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.3);
+            text-transform: uppercase;
         }
 
         .btn-action:hover {
-            transform: scale(1.05);
-            background: #28a745;
-            color: #fff;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(40, 167, 69, 0.5);
+            background: #34ce57;
         }
 
+        .btn-action:active { transform: translateY(0); }
+
         .counter {
-            margin-top: 20px;
-            font-size: 0.7rem;
+            margin-top: 25px;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.25);
         }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <h1>LUCASTAÇO</h1>
+        <h1>LUCASTAÇO EXPLORER</h1>
         
         <div class="photo-card">
             <img id="display-img" src="" alt="Foco no objetivo">
             <div class="quote-overlay">
-                <div id="motivation-text">"O sucesso é a soma de pequenos esforços repetidos dia após dia."</div>
+                <div id="motivation-text">Carregando inspiração...</div>
             </div>
         </div>
 
-        <button class="btn-action" onclick="nextStep()">NOVA INSPIRAÇÃO 🎲</button>
+        <button class="btn-action" onclick="nextStep()">SORTEAR DESTINO 🎲</button>
 
         <div class="counter" id="img-counter">Progresso: 0/0</div>
     </div>
@@ -130,76 +145,4 @@
     <script>
         const lucasPhotos = [
             "https://i.imgur.com/qB3Ly5S.jpg", "https://i.imgur.com/wzJmyi2.jpg",
-            "https://i.imgur.com/CxSIb1c.jpg", "https://i.imgur.com/6zs7zPa.jpg",
-            "https://i.imgur.com/R3x4Hy5.jpg", "https://i.imgur.com/wuzoEvd.jpg",
-            "https://i.imgur.com/7p7gGKj.jpg", "https://i.imgur.com/EtIlkF4.jpg",
-            "https://i.imgur.com/fDIdYdK.jpg", "https://i.imgur.com/nI7S3cm.jpg",
-            "https://i.imgur.com/ALZlQk6.jpg", "https://i.imgur.com/nKLsZP0.jpg",
-            "https://i.imgur.com/RzfYcCD.jpg", "https://i.imgur.com/bmRtMUH.jpg",
-            "https://i.imgur.com/OxrGM7M.jpg", "https://i.imgur.com/Q8Mwplc.jpg",
-            "https://i.imgur.com/ix7g5HW.jpg", "https://i.imgur.com/Qgh6mQa.jpg",
-            "https://i.imgur.com/Fc6DCfc.jpg", "https://i.imgur.com/6bWNf3S.jpg",
-            "https://i.imgur.com/8qsxIpq.jpg", "https://i.imgur.com/9uylBMQ.jpg",
-            "https://i.imgur.com/YtzG6dF.jpg", "https://i.imgur.com/myYLeVE.jpg",
-            "https://i.imgur.com/MjwDn5R.jpg", "https://i.imgur.com/shCboG4.jpg"
-        ];
-
-        const quotes = [
-            "A persistência é o caminho do êxito.",
-            "Onde há vontade, há um caminho.",
-            "Sua única limitação é aquela que você impõe em sua mente.",
-            "Grandes jornadas começam com um único passo.",
-            "Foco, força e fé.",
-            "Não pare até se orgulhar.",
-            "O sucesso não é por acaso, é trabalho duro.",
-            "Transforme seus medos em combustível.",
-            "Seja a sua melhor versão hoje.",
-            "A disciplina é a ponte entre metas e realizações."
-        ];
-
-        let availablePhotos = [...lucasPhotos];
-        let viewedCount = 0;
-
-        function nextStep() {
-            if (availablePhotos.length === 0) {
-                availablePhotos = [...lucasPhotos];
-                viewedCount = 0;
-            }
-
-            const randomIndex = Math.floor(Math.random() * availablePhotos.length);
-            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            const selectedImg = availablePhotos[randomIndex];
-
-            availablePhotos.splice(randomIndex, 1);
-            viewedCount++;
-
-            updateUI(selectedImg, randomQuote);
-        }
-
-        function updateUI(imgUrl, quoteText) {
-            const img = document.getElementById('display-img');
-            const txt = document.getElementById('motivation-text');
-            const cnt = document.getElementById('img-counter');
-
-            // Fade out
-            img.style.opacity = 0;
-            txt.style.opacity = 0;
-            txt.style.transform = "translateY(10px)";
-
-            setTimeout(() => {
-                img.src = imgUrl;
-                txt.innerText = `"${quoteText}"`;
-                cnt.innerText = `Catálogo: ${viewedCount} / ${lucasPhotos.length}`;
-                
-                // Fade in
-                img.style.opacity = 1;
-                txt.style.opacity = 1;
-                txt.style.transform = "translateY(0)";
-            }, 300);
-        }
-
-        // Início
-        nextStep();
-    </script>
-</body>
-</html>
+            "https://i
